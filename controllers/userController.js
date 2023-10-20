@@ -50,9 +50,12 @@ const Login = async (req, res) => {
       if (user) {
         console.log("email found");
         // Checks if the password matches the stored digest
-        let matched = await middleware.comparePassword(user.password, password);
+        let passwordMatched = await middleware.comparePassword(
+          user.password,
+          password
+        );
         // If they match, constructs a payload object of values we want on the front end
-        if (matched) {
+        if (passwordMatched) {
           let payload = {
             id: user.id,
             email: user.email,
@@ -68,9 +71,12 @@ const Login = async (req, res) => {
       const user = await User.findOne({ username });
       if (user) {
         // Checks if the password matches the stored digest
-        let matched = await middleware.comparePassword(user.password, password);
+        let passwordMatched = await middleware.comparePassword(
+          user.password,
+          password
+        );
         // If they match, constructs a payload object of values we want on the front end
-        if (matched) {
+        if (passwordMatched) {
           let payload = {
             id: user.id,
             email: user.email,
@@ -88,7 +94,39 @@ const Login = async (req, res) => {
   }
 };
 
+const UpdatePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    let user = await User.findById(req.params.user_id);
+    let passwordMatched = await middleware.comparePassword(
+      user.password,
+      oldPassword
+    );
+    if (passwordMatched) {
+      let passwordDigest = await middleware.hashPassword(newPassword);
+      user = await User.findByIdAndUpdate(req.params.user_id, {
+        password: passwordDigest,
+      });
+      let payload = {
+        id: user.id,
+        email: user.email,
+      };
+      return res.send({ status: "Password Updated!", user: payload });
+    }
+    res
+      .status(401)
+      .send({ status: "Error", msg: "Old Password did not match!" });
+  } catch (error) {
+    console.log(error);
+    res.status(401).send({
+      status: "Error",
+      msg: "An error has occurred updating password!",
+    });
+  }
+};
+
 module.exports = {
-  Register,
   Login,
+  Register,
+  UpdatePassword,
 };
