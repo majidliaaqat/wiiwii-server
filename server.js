@@ -1,8 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
-
 const UserRoutes = require("./routes/UserRoutes");
+const PostRoutes = require("./routes/PostRoutes");
 
 require("dotenv").config();
 const config = require("./config/config");
@@ -16,6 +16,7 @@ app.use(express.json());
 
 // Routes
 app.use("/auth", UserRoutes);
+app.use("/post", PostRoutes);
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
