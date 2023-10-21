@@ -18,6 +18,14 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    username: {
+      type: String,
+      required: true,
+    },
+    // userProfilePic: {
+    //   type: String,
+    //   required: true,
+    // },
     brand: {
       type: String,
       required: true,
