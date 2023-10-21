@@ -46,6 +46,18 @@ const CreatePost = async (req, res) => {
   }
 };
 
+// Fetch Post
+const fetchPost = async (req, res) => {
+  try {
+    const post = await Post.find({});
+    console.log(post);
+    res.status(200).json(post);
+  } catch (error) {
+    res.status(404).send("Unable to Fetch Post");
+    throw error;
+  }
+};
 module.exports = {
   CreatePost,
+  fetchPost,
 };
