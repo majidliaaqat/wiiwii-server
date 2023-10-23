@@ -13,14 +13,14 @@ const Register = async (req, res) => {
     let existingUser = await User.findOne({ email });
     if (existingUser) {
       return res
-        .status(400)
+        .status(409)
         .send("A user with that email has already been registered!");
     } else {
       // Creates a new user
       let existingUser = await User.findOne({ username });
       if (existingUser) {
         return res
-          .status(400)
+          .status(409)
           .send("A user with that username has already been registered!");
       }
       const user = await User.create({
@@ -28,10 +28,11 @@ const Register = async (req, res) => {
         lastname,
         email,
         username,
+        profilepic: req.file.path,
         password: passwordDigest,
       });
       // Sends the user as a response
-      res.send(user);
+      res.status(201).json(user);
     }
   } catch (error) {
     throw error;
@@ -62,7 +63,7 @@ const Login = async (req, res) => {
           };
           // Creates our JWT and packages it with our payload to send as a response
           let token = middleware.createToken(payload);
-          return res.send({ user: payload, token });
+          return res.send({ user: user, token });
         }
         res.status(401).send({ status: "Error", msg: "Unauthorized" });
       }
@@ -83,14 +84,14 @@ const Login = async (req, res) => {
           };
           // Creates our JWT and packages it with our payload to send as a response
           let token = middleware.createToken(payload);
-          return res.send({ user: payload, token });
+          return res.send({ user: user, token });
         }
         res.status(401).send({ status: "Error", msg: "Unauthorized" });
       }
     }
   } catch (error) {
     console.log(error);
-    res.status(401).send({ status: "Error", msg: "An error has occurred!" });
+    res.status(404).send({ status: "Error", msg: "An error has occurred!" });
   }
 };
 
