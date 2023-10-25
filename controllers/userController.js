@@ -1,4 +1,6 @@
 const User = require("../models/User");
+const Message = require("../models/Message");
+const Post = require("../models/Post");
 const middleware = require("../middleware");
 
 const Register = async (req, res) => {
@@ -130,8 +132,25 @@ const UpdatePassword = async (req, res) => {
   }
 };
 
+// Delete a user by ID
+const user_delete = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    if (Post.find({ user: userId })) {
+      const deletedPosts = await Post.deleteMany({ user: userId });
+      console.log("Deleted Posts: ", deletedPosts);
+    }
+    await User.findByIdAndDelete(userId);
+    res.status(200).send("User Deleted");
+  } catch (err) {
+    console.error("Error deleting message: " + err);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
 module.exports = {
   Login,
   Register,
   UpdatePassword,
+  user_delete,
 };
