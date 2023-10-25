@@ -6,10 +6,10 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    // image: {
-    //   type: String,
-    //   required: true,
-    // },
+    image: {
+      type: String,
+      required: true,
+    },
     description: {
       type: String,
       required: true,
@@ -22,10 +22,10 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    // userProfilePic: {
-    //   type: String,
-    //   required: true,
-    // },
+    userProfilePic: {
+      type: String,
+      required: true,
+    },
     brand: {
       type: String,
       required: true,

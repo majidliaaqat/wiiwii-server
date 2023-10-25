@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 const CreatePost = async (req, res) => {
   try {
     console.log(req.body);
+    console.log(req.file);
+    const image = req.file.path;
     // Extracts the necessary fields from the request body
     const {
       title,
@@ -24,12 +26,14 @@ const CreatePost = async (req, res) => {
     if (user) {
       console.log(user);
       const username = user.username;
+      const userProfilePic = user.profilepic;
       const post = await Post.create({
         title,
+        image,
         description,
         userId,
         username,
-        // userProfilePic,
+        userProfilePic,
         brand,
         year,
         model,

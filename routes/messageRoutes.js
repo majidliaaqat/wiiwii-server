@@ -1,18 +1,17 @@
 const express = require("express");
-const methodOverried = require("method-override");
 const router = express.Router();
+const messageController = require("../controllers/messageController");
 
-router.use(methodOverried("_method"));
-router.use(express.urlencoded({ extended: true }));
+// Create a new message/question
+router.post("/message", messageController.message_create);
 
-const adminLayout = "../views/layouts/admin";
-const jwtSecret = process.env.JWT_SECRET;
+// Read a message by ID
+router.get("/fetchmsg/:id", messageController.message_read);
 
-const messageController = require("../controllers/MessageController");
+// Update a message by ID
+router.put("/message/:id", messageController.message_update);
 
-router.get("/add-comment", messageController.comment_add_get);
-router.post("/add-comment", messageController.comment_add_post);
-
-//
+// Delete a message by ID
+router.delete("/message/:id", messageController.message_delete);
 
 module.exports = router;

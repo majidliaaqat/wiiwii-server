@@ -1,38 +1,67 @@
-const Comments = require("../models/Message");
+const Message = require("../models/Message");
 const User = require("../models/User");
 const Post = require("../models/Post");
-const bcrypt = require("bcrypt");
 
-const moment = require("moment");
-
-// const passport = require("../library/ppConfig");
-
-exports.comment_add_get = (req, res) => {
-  Post.findById(req.query.postId).then((post) => {
-    res.render("profile/comment", { post });
-  });
+// Create new message
+exports.message_create = async (req, res) => {
+  try {
+    console.log(req.body);
+    const { postID, text, author } = req.body;
+    const newmessage = await Message.create({
+      postID,
+      text,
+      author,
+    });
+    if (newmessage) {
+      res.status(201).send("Message Created!");
+    } else {
+      res.staus(400).send("Unable to create message!");
+    }
+  } catch (err) {
+    console.error("Error creating message: " + err);
+    res.status(500).send("Internal Server Error");
+  }
 };
 
-exports.comment_add_post = (req, res) => {
-  let comment = Comments(req.body);
-  console.log(req.currentUser);
-  comment.createdUser = req.body.createdUser;
-  comment.postId = req.body.postId;
-  comment
-    .save()
-    .then(() => {
-      Post.findById(req.body.postId)
-        .then((post) => {
-          post.comments.push(comment._id);
-          post.save();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+// Read a message by ID
+exports.message_read = async (req, res) => {
+  try {
+    const id = req.params.id;
+    console.log(id);
+    const messages = await Message.find({ postID: id });
+    if (messages) {
+      console.log(messages);
+      res.status(200).json(messages);
+    } else {
+      res.status(400).send("Unable to fetch messages");
+    }
+  } catch (err) {
+    console.error("Error reading message: " + err);
+    res.status(500).send("Internal Server Error");
+  }
+};
 
-      res.redirect("profile");
-    })
-    .catch((err) => {
-      console.log(err);
+// Update a message by ID
+exports.message_update = async (req, res) => {
+  try {
+    const message = await Message.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
     });
+    res.redirect(`/post?id=${req.body.postId}`);
+  } catch (err) {
+    console.error("Error updating message: " + err);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+// Delete a message by ID
+exports.message_delete = async (req, res) => {
+  try {
+    const message = await Message.findById(req.params.id);
+    await message.remove();
+    res.redirect(`/post?id=${req.body.postId}`);
+  } catch (err) {
+    console.error("Error deleting message: " + err);
+    res.status(500).send("Internal Server Error");
+  }
 };
