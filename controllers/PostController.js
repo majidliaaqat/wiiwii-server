@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 
 const CreatePost = async (req, res) => {
   try {
+    console.log(req.body);
     const image = req.file.path;
     const {
       title,
@@ -61,7 +62,7 @@ const CreatePost = async (req, res) => {
 
     res.status(201).send("Post Created Successfully.");
   } catch (error) {
-    console.error(error);
+    console.log(error);
     if (error.name === "CastError") {
       return res.status(400).send("Invalid input format.");
     }
@@ -81,7 +82,20 @@ const fetchPost = async (req, res) => {
   }
 };
 
+// delete post
+
+const post_delete = async (req, res) => {
+  try {
+    const post = await Post.findByIdAndDelete(req.params.id);
+    res.status(200).send("Post Deleted");
+  } catch (err) {
+    console.error("Error deleting message: " + err);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
 module.exports = {
   CreatePost,
   fetchPost,
+  post_delete,
 };
