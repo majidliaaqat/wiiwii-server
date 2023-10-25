@@ -98,6 +98,7 @@ const Login = async (req, res) => {
 const UpdatePassword = async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;
+    console.log(req.body);
     let user = await User.findById(req.params.user_id);
     let passwordMatched = await middleware.comparePassword(
       user.password,
@@ -112,11 +113,14 @@ const UpdatePassword = async (req, res) => {
         id: user.id,
         email: user.email,
       };
-      return res.send({ status: "Password Updated!", user: payload });
+      return res
+        .status(200)
+        .send({ status: "Password Updated!", user: payload });
     }
+    console.log("Not Matched");
     res
-      .status(401)
-      .send({ status: "Error", msg: "Old Password did not match!" });
+      .status(221)
+      .json({ status: "Error", msg: "Old Password did not match!" });
   } catch (error) {
     console.log(error);
     res.status(401).send({

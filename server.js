@@ -4,7 +4,6 @@ const path = require("path");
 const multer = require("multer");
 const UserRoutes = require("./routes/UserRoutes");
 const PostRoutes = require("./routes/PostRoutes");
-const MessageRoutes = require("./routes/MessageRoutes");
 
 require("dotenv").config();
 const config = require("./config/config");
@@ -16,12 +15,12 @@ const port = process.env.PORT || 4000;
 app.use(cors());
 app.use("/Uploads", express.static(path.join(__dirname, "Uploads")));
 app.use(express.json());
-const commentRouter = require("./routes/MessageRoutes");
+const messageRouter = require("./routes/messageRoutes");
 
 // Routes
 app.use("/auth", UserRoutes);
 app.use("/post", PostRoutes);
-app.get("/comment", MessageRoutes);
+app.use("/msg", messageRouter);
 
 // Default routes
 app.get("/", (req, res) => {
