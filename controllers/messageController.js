@@ -7,7 +7,7 @@ exports.message_create = async (req, res) => {
   try {
     console.log(req.body);
     const { postId, text, userId } = req.body;
-
+    console.log("User ID: ", userId);
     // Ensure that the post and user exist
     const post = await Post.findById(postId);
     console.log(postId);
@@ -46,7 +46,6 @@ exports.message_read = async (req, res) => {
       .populate("user");
 
     if (messages) {
-      console.log(messages);
       res.status(200).json(messages);
     } else {
       res.status(400).send("Unable to fetch messages");
