@@ -72,9 +72,8 @@ exports.message_update = async (req, res) => {
 // Delete a message by ID
 exports.message_delete = async (req, res) => {
   try {
-    const message = await Message.findById(req.params.id);
-    await message.remove();
-    res.redirect(`/post?id=${req.body.postId}`);
+    const message = await Message.findByIdAndDelete(req.params.id);
+    res.status(200).send("Message Deleted");
   } catch (err) {
     console.error("Error deleting message: " + err);
     res.status(500).send("Internal Server Error");
