@@ -6,16 +6,27 @@ const Post = require("../models/Post");
 exports.message_create = async (req, res) => {
   try {
     console.log(req.body);
-    const { postID, text, author } = req.body;
+    const { postId, text, userId } = req.body;
+
+    // Ensure that the post and user exist
+    const post = await Post.findById(postId);
+    console.log(postId);
+    const user = await User.findById(userId);
+
+    if (!post || !user) {
+      return res.status(400).send("Invalid post or user ID");
+    }
+
     const newmessage = await Message.create({
-      postID,
+      post: postId,
       text,
-      author,
+      user: user._id,
     });
+
     if (newmessage) {
       res.status(201).send("Message Created!");
     } else {
-      res.staus(400).send("Unable to create message!");
+      res.status(400).send("Unable to create message!");
     }
   } catch (err) {
     console.error("Error creating message: " + err);
@@ -28,7 +39,12 @@ exports.message_read = async (req, res) => {
   try {
     const id = req.params.id;
     console.log(id);
-    const messages = await Message.find({ postID: id });
+
+    // Populate post and user details when fetching messages
+    const messages = await Message.find({ post: id })
+      .populate("post")
+      .populate("user");
+
     if (messages) {
       console.log(messages);
       res.status(200).json(messages);

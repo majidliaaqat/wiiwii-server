@@ -6,7 +6,7 @@ const messageController = require("../controllers/messageController");
 router.post("/message", messageController.message_create);
 
 // Read a message by ID
-router.get("/fetchmsg/:id", messageController.message_read);
+router.get("/message/:id", messageController.message_read);
 
 // Update a message by ID
 router.put("/message/:id", messageController.message_update);

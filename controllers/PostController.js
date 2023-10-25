@@ -4,8 +4,6 @@ const mongoose = require("mongoose");
 
 const CreatePost = async (req, res) => {
   try {
-    console.log(req.body);
-    console.log(req.file);
     const image = req.file.path;
     const {
       title,
@@ -20,37 +18,61 @@ const CreatePost = async (req, res) => {
       location,
     } = req.body;
 
+    // Input validation
+    if (
+      !title ||
+      !description ||
+      !userId ||
+      !brand ||
+      !year ||
+      !model ||
+      !kilometers ||
+      !transmitionType ||
+      !price ||
+      !location
+    ) {
+      return res.status(400).send("All fields are required.");
+    }
+
+    // Check if userId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).send("Invalid UserId format.");
+    }
+
     // Check if the user exists
     const user = await User.findById(userId);
-    if (user) {
-      console.log(user);
-      const post = await Post.create({
-        title,
-        image,
-        description,
-        author: userId,
-        brand,
-        year,
-        model,
-        kilometers,
-        transmitionType,
-        price,
-        location,
-      });
-      res.status(201).send("Post Created Successfully.");
-    } else {
-      res.status(404).send("UserId Not Found");
+    if (!user) {
+      return res.status(404).send("UserId Not Found");
     }
+
+    const post = await Post.create({
+      title,
+      image,
+      description,
+      user: userId,
+      brand,
+      year,
+      model,
+      kilometers,
+      transmitionType,
+      price,
+      location,
+    });
+
+    res.status(201).send("Post Created Successfully.");
   } catch (error) {
-    res.status(500).send("Unable to Create Post");
     console.error(error);
+    if (error.name === "CastError") {
+      return res.status(400).send("Invalid input format.");
+    }
+    res.status(500).send("Internal Server Error.");
   }
 };
 
 // Fetch Post
 const fetchPost = async (req, res) => {
   try {
-    const posts = await Post.find({}).populate("author");
+    const posts = await Post.find({}).populate("user");
     console.log(posts);
     res.status(200).json(posts);
   } catch (error) {
