@@ -62,7 +62,9 @@ exports.message_update = async (req, res) => {
     const message = await Message.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
-    res.redirect(`/post?id=${req.body.postId}`);
+    if (message) {
+      res.status(200).send("Comment Updated!");
+    }
   } catch (err) {
     console.error("Error updating message: " + err);
     res.status(500).send("Internal Server Error");
