@@ -7,7 +7,6 @@ const CreatePost = async (req, res) => {
     console.log(req.body);
     console.log(req.file);
     const image = req.file.path;
-    // Extracts the necessary fields from the request body
     const {
       title,
       description,
@@ -21,19 +20,15 @@ const CreatePost = async (req, res) => {
       location,
     } = req.body;
 
-    const Id = new mongoose.Types.ObjectId(userId);
-    const user = await User.findById(Id);
+    // Check if the user exists
+    const user = await User.findById(userId);
     if (user) {
       console.log(user);
-      const username = user.username;
-      const userProfilePic = user.profilepic;
       const post = await Post.create({
         title,
         image,
         description,
-        userId,
-        username,
-        userProfilePic,
+        author: userId,
         brand,
         year,
         model,
@@ -43,24 +38,27 @@ const CreatePost = async (req, res) => {
         location,
       });
       res.status(201).send("Post Created Successfully.");
-    } else res.status(404).send("UserId Not Found");
+    } else {
+      res.status(404).send("UserId Not Found");
+    }
   } catch (error) {
-    res.status(404).send("Unable to Create Post");
-    throw error;
+    res.status(500).send("Unable to Create Post");
+    console.error(error);
   }
 };
 
 // Fetch Post
 const fetchPost = async (req, res) => {
   try {
-    const post = await Post.find({});
-    console.log(post);
-    res.status(200).json(post);
+    const posts = await Post.find({}).populate("author");
+    console.log(posts);
+    res.status(200).json(posts);
   } catch (error) {
-    res.status(404).send("Unable to Fetch Post");
-    throw error;
+    res.status(500).send("Unable to Fetch Posts");
+    console.error(error);
   }
 };
+
 module.exports = {
   CreatePost,
   fetchPost,
