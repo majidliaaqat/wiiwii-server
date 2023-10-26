@@ -15,8 +15,6 @@ const upload = multer({ storage: storage });
 
 router.post("/createPost", upload.single("photo"), controller.CreatePost);
 router.get("/fetchPost", controller.fetchPost);
-
-// Delete a post by ID
 router.delete("/delete_post/:id", controller.post_delete);
 
 module.exports = router;

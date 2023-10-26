@@ -23,8 +23,6 @@ router.put(
   middleware.verifyToken,
   controller.UpdatePassword
 );
-
-// Delete a user by ID
 router.delete("/delete/:id", controller.user_delete);
 
 module.exports = router;
